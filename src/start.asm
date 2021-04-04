@@ -1,34 +1,40 @@
+;; 32-bit mode
+bits 32
+
+MBOOT_HEADER_MAGIC      equ 0xe85250d6
+MBOOT_I386_ARCHITECTURE equ 0
+
+extern main
 global start
-global luc
-    
-section .multiboot_header
-header_start:
+
+section .data
+mboot_start:
 
     ;; Magic number
-    dd 0xe85250d6
+    dd MBOOT_HEADER_MAGIC
 
     ;; Architecture (protected mode i386)
-    dd 0
+    dd MBOOT_I386_ARCHITECTURE
 
     ;; Header length
-    dd header_end - header_start
+    dd mboot_end - mboot_start
 
     ;; Checksum
-    dd 0x100000000 - (0xe85250d6 + 0 + (header_end - header_start))
+    dd 0x100000000 - (MBOOT_HEADER_MAGIC + MBOOT_I386_ARCHITECTURE + (mboot_end - mboot_start))
 
     ;; End tag
     dw 0
     dw 0
     dd 8
 
-header_end: 
+mboot_end: 
 
-bits 32
 
 section .text
 start:
-    ;; Print 'OK'
-    mov dword [0xb8000], 0x2f4b2f4f
-    hlt
+	push ebx
+	call main
 
+	hlt
 
+    

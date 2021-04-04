@@ -4,14 +4,16 @@ SECTIONS
 {
     . = 1M;
 
-    .boot :
+    .data :
     {
-        *(.multiboot_header)
+        *(.data)
     }
+
 
     .text :
     {
         *(.text)
     }
+
 
 }
