@@ -32,9 +32,10 @@ mboot_end:
 
 section .text
 start:
-	push ebx
-	call main
+    push ebx
+    cli
+    call main
 
-	hlt
+    jmp $
 
     

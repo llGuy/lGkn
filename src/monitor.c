@@ -1,4 +1,5 @@
 #include "monitor.h"
+#include "port.h"
 
 static struct monitor mtr;
 
@@ -8,6 +9,14 @@ static inline uint8_t vga_attrib(uint8_t bg, uint8_t fg) {
 
 static inline uint16_t vga_char(uint8_t c, uint8_t attrib) {
     return c | (attrib << 8);
+}
+
+void monitor_enable_cursor(uint8_t cursor_start, uint8_t cursor_end) {
+    out_u8(0x3D4, 0x0A);
+    out_u8(0x3D5, (in_u8(0x3D5) & 0xC0) | cursor_start);
+ 
+    out_u8(0x3D4, 0x0B);
+    out_u8(0x3D5, (in_u8(0x3D5) & 0xE0) | cursor_end);
 }
 
 void monitor_update_cursor() {
@@ -47,9 +56,12 @@ void monitor_init() {
     mtr.framebuffer = (uint16_t *)MONITOR_START_ADDR;
     mtr.x = 0;
     mtr.y = 0;
+
+    // Make it a fat box
+    monitor_enable_cursor(0, 15);
 }
 
-void monitor_put(char c) {
+void monitor_putch(char c) {
     uint8_t bg = VGA_BLACK;
     uint8_t fg = VGA_WHITE;
 
@@ -82,4 +94,41 @@ void monitor_put(char c) {
 
     monitor_scroll();
     monitor_update_cursor();
+}
+
+
+void monitor_putbase10(int i) {
+    char buffer[10] = { 0 };
+    int c = 0;
+    for (int num = i; num; num /= 10, ++c) {
+        buffer[c] = num % 10;
+    }
+
+    for (int i = 0; i < c; ++i) {
+        monitor_putch('0' + buffer[c - i - 1]);
+    }
+}
+
+void monitor_putbase16(int i) {
+    
+}
+
+void monitor_clear() {
+    uint8_t attrib = vga_attrib(VGA_BLACK, VGA_WHITE);
+    uint16_t space = vga_char(0x20, attrib);
+
+    for (int i = 0; i < 80 * 25; ++i) {
+        mtr.framebuffer[i] = space;
+    }
+
+    mtr.x = 0;
+    mtr.y = 0;
+
+    monitor_update_cursor();
+}
+
+void monitor_write(char *c) {
+    for (int i = 0; c[i]; ++i) {
+        monitor_putch(c[i]);
+    }
 }

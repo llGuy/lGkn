@@ -27,10 +27,13 @@ struct monitor {
 };
 
 void monitor_init();
-void monitor_put(char c);
+void monitor_putch(char c);
+void monitor_putbase10(int i);
+void monitor_putbase16(int i);
 void monitor_clear();
 void monitor_write(char *c);
 void monitor_scroll();
 void monitor_update_cursor();
+void monitor_enable_cursor(uint8_t cursor_start, uint8_t cursor_end);
 
 #endif

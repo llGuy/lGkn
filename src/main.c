@@ -1,20 +1,16 @@
 #include "int.h"
 #include "monitor.h"
 
+typedef struct multiboot multiboot_t;
+
 int main(
-    struct multiboot *mboot_info) {
+    multiboot_t *mboot_info) {
     (void)mboot_info;
-#if 0
-    unsigned int *screen = (unsigned int *)0xb8000;
-    *screen = 0x2f4b2f4f;
-#endif
 
     monitor_init();
-    char hello_world[] = "Hello world\n";
-    for (int i = 0; i < sizeof(hello_world) / sizeof(char); ++i) {
-        monitor_put(hello_world[i]);
-    }
-
+    monitor_clear();
+    monitor_write("Hello World\n");
+    monitor_putbase10(4231);
 
     return 0;
 }

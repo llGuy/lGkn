@@ -5,7 +5,7 @@ c_src := $(shell find src -name *.c)
 c_obj := $(patsubst src/%.c, build/%.o, $(c_src))
 
 CC = gcc
-CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -Wall -Wextra -c
+CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -c
 
 all: build_kernel
 
