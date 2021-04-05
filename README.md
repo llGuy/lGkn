@@ -1,4 +1,4 @@
-* lGkn
+# lGkn
 
 A project to learn about kernel development.
 
