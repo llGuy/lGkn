@@ -1,6 +1,6 @@
 #include "gdt.h"
 
-static gdt_entry_t gdt_entries[5];
+static gdt_entry_t gdt_entries[3];
 static gdt_ptr_t gdt_ptr;
 
 extern void gdt_flush(uint32_t);
@@ -14,7 +14,7 @@ void gdt_set_entry_fields(
     /* Set fields of the base */
     gdt_entries[num].base_low = (base & 0xFFFF);
     gdt_entries[num].base_middle = (base >> 16) & 0xFF;
-    gdt_entries[num].base_high = (base >> 24) & 0xFf;
+    gdt_entries[num].base_high = (base >> 24) & 0xFF;
     /* Set fields related to the limit */
     gdt_entries[num].limit_low = limit & 0xFFFF;
     gdt_entries[num].granularity = (limit >> 16) & 0x0F;
@@ -24,7 +24,7 @@ void gdt_set_entry_fields(
 }
 
 void gdt_init() {
-    gdt_ptr.limit = sizeof(gdt_entry_t) * 5 - 1;
+    gdt_ptr.limit = sizeof(gdt_entry_t) * 3 - 1;
     gdt_ptr.base = (uint32_t)&gdt_entries;
 
     /* Null segment */
@@ -37,10 +37,10 @@ void gdt_init() {
     gdt_set_entry_fields(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
 
     /* User mode code segment */
-    gdt_set_entry_fields(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
+    // gdt_set_entry_fields(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
 
     /* User mode data segment */
-    gdt_set_entry_fields(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
+    // gdt_set_entry_fields(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
 
     gdt_flush((uint32_t)&gdt_ptr);
 }

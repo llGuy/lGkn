@@ -1,7 +1,9 @@
 bits 32
 
+extern isr_handler
+
 %macro ISR_NOERRORCODE 1
-global isr%
+[GLOBAL isr%1]
 isr%1:
     cli
     push byte 0
@@ -10,7 +12,7 @@ isr%1:
 %endmacro
 
 %macro ISR_ERRORCODE 1
-global isr%
+[GLOBAL isr%1]
 isr%1:
     cli
     push byte %1
@@ -19,6 +21,7 @@ isr%1:
 
 section .text
 
+global idt_flush
 idt_flush:
     mov eax, [esp + 4]
     lidt [eax]
@@ -56,3 +59,33 @@ ISR_NOERRORCODE 28
 ISR_NOERRORCODE 29
 ISR_NOERRORCODE 30
 ISR_NOERRORCODE 31
+
+isr_common:
+    ;; Push edi, esi, ebp, esp, ebx, edx, ecx, eax
+    pusha
+
+    ;; Lower 160bits of eax = ds
+    mov ax, ds
+    push eax
+
+    ;; Basically: "Go into kernel mode"
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    call isr_handler
+
+    ;; Reload the original data segment descriptor
+    pop eax
+    
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    popa
+    add esp, 8
+    sti
+    iret

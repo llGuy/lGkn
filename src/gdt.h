@@ -34,7 +34,7 @@ typedef struct {
     uint16_t limit;
     // Address of the first gdb_entry
     uint32_t base;
-} gdt_ptr_t;
+} __attribute__((packed)) gdt_ptr_t;
 
 void gdt_init();
 
