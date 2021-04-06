@@ -2,6 +2,7 @@
 #define PAGE_H
 
 #include "int.h"
+#include "idt.h"
 
 uint32_t kernel_malloc(
     uint32_t size,
@@ -27,5 +28,21 @@ typedef struct {
 typedef struct {
     page_t pages[1024];
 } page_table_t;
+
+typedef struct {
+    // Array of pointers to page tables
+    page_table_t *tables[1024];
+    // Array of pointers to the page tables but with physical address
+    uint32_t  tables_physical[1024];
+    // Physical address of tables_physical
+    uint32_t ptr_physical_addr;
+} page_directory_t;
+
+void paging_init();
+void paging_switch_directory(page_directory_t *new);
+// If make && page table wasn't created, create it
+page_t *paging_get_page(uint32_t address, bool32_t make, page_directory_t *dir);
+// ISR
+void paging_fault(registers_t reg);
 
 #endif

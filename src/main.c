@@ -21,7 +21,5 @@ int main(
 
     // timer_init(50)  --> make sure to call "sti"
 
-
-
     return 0;
 }
