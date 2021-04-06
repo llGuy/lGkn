@@ -80,4 +80,18 @@ extern void isr29();
 extern void isr30();
 extern void isr31();
 
+typedef struct {
+    // Data segment selector (pushed with "push eax") - fourth thing to get pushed
+    uint32_t ds;
+    // Pushed by "pusha" - third thing to get pushed
+    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+    // Interrupt number and error code (if applicable) - second thing to get pushed
+    uint32_t int_no, err_code;
+    // Pushed by the processor automatically - first thing to get pushed
+    uint32_t eip, cs, eflags, useresp, ss;
+} registers_t;
+
+typedef void (* isr_t)(registers_t);
+void register_interrupt_handler(uint8_t n, isr_t handler);
+
 #endif

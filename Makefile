@@ -5,7 +5,7 @@ c_src := $(shell find src -name *.c)
 c_obj := $(patsubst src/%.c, build/%.o, $(c_src))
 
 CC = gcc
-CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -c
+CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -c -g
 
 all: build_kernel
 
@@ -13,7 +13,7 @@ $(c_obj): $(c_src)
 	$(CC) $(CFLAGS) $(patsubst build/%.o, src/%.c, $@) -o $@
 
 $(asm_obj): $(asm_src)
-	nasm -f elf $(patsubst build/%.o, src/%.asm, $@) -o $@
+	nasm -g -f elf $(patsubst build/%.o, src/%.asm, $@) -o $@
 
 .PHONY: build_kernel run clean
 build_kernel: $(asm_obj) $(c_obj)
