@@ -19,11 +19,9 @@ int main(
     gdt_init();
     idt_init();
 
-    asm volatile ("int $0x3");
-    asm volatile ("int $0x4");
-    asm volatile ("int $0x15");
+    // timer_init(50)  --> make sure to call "sti"
 
-    timer_init(50);
+
 
     return 0;
 }

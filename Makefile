@@ -15,7 +15,7 @@ $(c_obj): $(c_src)
 $(asm_obj): $(asm_src)
 	nasm -g -f elf $(patsubst build/%.o, src/%.asm, $@) -o $@
 
-.PHONY: build_kernel run clean
+.PHONY: build_kernel run clean debug
 build_kernel: $(asm_obj) $(c_obj)
 	ld -melf_i386 -n -o build/kernel.bin -T linker.ld $^ && \
 	cp build/kernel.bin iso/boot/kernel.bin && \
@@ -23,6 +23,9 @@ build_kernel: $(asm_obj) $(c_obj)
 
 run: build/kernel.iso
 	qemu-system-x86_64 -cdrom $^
+
+debug: build/kernel.iso
+	qemu-system-i386 -s -S -cdrom $^
 
 clean:
 	rm build/*

@@ -33,7 +33,7 @@ mboot_end:
 section .text
 start:
     push ebx
-    cli
+    cli                         ; Clear interrupts
     call main
 
     jmp $
