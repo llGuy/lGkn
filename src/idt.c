@@ -1,6 +1,7 @@
 #include "idt.h"
 #include "port.h"
 #include "monitor.h"
+#include "utility.h"
 
 static idt_entry_t idt_entries[256];
 static idt_ptr_t idt_ptr;
@@ -72,10 +73,7 @@ void idt_init() {
     idt_ptr.limit = sizeof(idt_entry_t) * 256 - 1;
     idt_ptr.base = (uint32_t)&idt_entries;
 
-    /* Implement memset soon */
-    for (uint32_t i = 0; i < sizeof(idt_entry_t) * 256; ++i) {
-        ((uint8_t *)idt_entries)[i] = 0;
-    }
+    memset(idt_entries, 0, sizeof(idt_entry_t) * 256);
 
     irq_remap();
 
@@ -137,13 +135,19 @@ void idt_init() {
     idt_flush((uint32_t)&idt_ptr);
 }
 
+static isr_t interrupt_handlers[256];
+
 void isr_handler(registers_t regs) {
-    monitor_write("Received interrupt: ");
-    monitor_putbase10(regs.int_no);
-    monitor_putch('\n');
+    if (interrupt_handlers[regs.int_no]) {
+        (interrupt_handlers[regs.int_no])(regs);
+    }
+    else {
+        monitor_write("Received interrupt: ");
+        monitor_putbase10(regs.int_no);
+        monitor_putch('\n');
+    }
 }
 
-static isr_t interrupt_handlers[256];
 
 void register_interrupt_handler(uint8_t n, isr_t handler) {
     interrupt_handlers[n] = handler;

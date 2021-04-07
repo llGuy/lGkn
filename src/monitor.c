@@ -110,7 +110,19 @@ void monitor_putbase10(int i) {
 }
 
 void monitor_putbase16(int i) {
-    
+    const static char digits[16] = {
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        'A', 'B', 'C', 'D', 'E', 'F' };
+
+    char buffer[10] = { 0 };
+    int c = 0;
+    for (uint32_t num = i; num; num /= 16, ++c) {
+        buffer[c] = digits[num % 16];
+    }
+
+    for (uint32_t i = 0; i < c; ++i) {
+        monitor_putch(buffer[c - i - 1]);
+    }
 }
 
 void monitor_clear() {

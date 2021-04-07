@@ -7,7 +7,7 @@ MBOOT_I386_ARCHITECTURE equ 0
 extern main
 global start
 
-section .data
+section .multiboot
 mboot_start:
 
     ;; Magic number

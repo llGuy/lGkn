@@ -10,6 +10,7 @@ uint32_t kernel_malloc(
     uint32_t *physical);
 
 typedef struct {
+    // Is it present?
     uint32_t present : 1;
     // If 0 -> read-only ; If 1 -> readwrite
     uint32_t is_readwrite : 1;
@@ -22,6 +23,7 @@ typedef struct {
     // Reserved / unused
     uint32_t unused : 7;
     // Frame address (shifted right 12 bits because the last 12 will be 0 anyway because alignment)
+    // Physical address
     uint32_t frame : 20;
 } page_t;
 
@@ -39,7 +41,7 @@ typedef struct {
 } page_directory_t;
 
 void paging_init();
-void paging_switch_directory(page_directory_t *new);
+void paging_switch_directory(page_directory_t *new_dir);
 // If make && page table wasn't created, create it
 page_t *paging_get_page(uint32_t address, bool32_t make, page_directory_t *dir);
 // ISR
