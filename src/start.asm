@@ -4,7 +4,7 @@ bits 32
 MBOOT_HEADER_MAGIC      equ 0xe85250d6
 MBOOT_I386_ARCHITECTURE equ 0
 
-extern main
+extern kernel_main
 global start
 
 section .multiboot
@@ -34,7 +34,7 @@ section .text
 start:
     push ebx
     cli                         ; Clear interrupts
-    call main
+    call kernel_main
 
     jmp $
 

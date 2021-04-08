@@ -5,7 +5,7 @@ c_src := $(shell find src -name *.c)
 c_obj := $(patsubst src/%.c, build/%.o, $(c_src))
 
 CC = gcc
-CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -c -g
+CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -c
 
 all: build_kernel
 
@@ -15,7 +15,7 @@ $(c_obj): $(c_src)
 $(asm_obj): $(asm_src)
 	nasm -g -f elf $(patsubst build/%.o, src/%.asm, $@) -o $@
 
-.PHONY: build_kernel run clean debug
+.PHONY: build_kernel run clean debug install
 build_kernel: $(asm_obj) $(c_obj)
 	ld -melf_i386 -n -o build/kernel.bin -T linker.ld $^ && \
 	cp build/kernel.bin iso/boot/kernel.bin && \
@@ -29,3 +29,6 @@ debug: build/kernel.iso
 
 clean:
 	rm build/*
+
+install: build/kernel.bin
+	sudo cp $^ /boot/lGkn.bin

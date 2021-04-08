@@ -7,7 +7,7 @@
 
 typedef struct multiboot multiboot_t;
 
-int main(
+int kernel_main(
     multiboot_t *mboot_info) {
     (void)mboot_info;
 
