@@ -12,4 +12,6 @@ typedef   signed char int8_t;
 
 typedef int32_t bool32_t;
 
+#define NULL (void *)0
+
 #endif

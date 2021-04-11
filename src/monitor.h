@@ -22,8 +22,8 @@
 #include "int.h"
 
 struct monitor {
-    uint16_t *framebuffer;
-    uint16_t x, y;
+  uint16_t *framebuffer;
+  uint16_t x, y;
 };
 
 void monitor_init();
