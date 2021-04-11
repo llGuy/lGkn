@@ -129,3 +129,29 @@ static uint32_t s_contract(uint32_t new_size, heap_t *heap) {
 
   return new_size;
 }
+
+void *alloc(uint32_t size, uint8_t page_align, heap_t *heap) {
+  uint32_t new_size = size + sizeof(header_t) + sizeof(footer_t);
+  int32_t it = s_find_smallest_hole(new_size, page_align, heap);
+
+  if (it == -1) {
+    // There wasn't a hole that would fit this
+  }
+
+  header_t *orig_hole_hd = (header_t *)find_ordered_array(it, &heap->index);
+  uint32_t orig_hole_pos = (uint32_t)orig_hole_hd;
+  uint32_t orig_hole_size = orig_hole_hd->size;
+  if (orig_hole_size - new_size < sizeof(header_t) + sizeof(footer_t)) {
+    // Increase the requested size to the size of the hole we find
+    size += orig_hole_size - new_size;
+    new_size = orig_hole_size;
+  }
+
+  if (page_align && orig_hole_pos & 0xFFFFF000) {
+    uint32_t new_loc = orig_hole_pos + 0x1000 -
+      (orig_hole_pos & 0xFFF) - sizeof(header_t);
+
+    header_t *hole_hd = (header_t *)orig_hole_pos;
+    hole_hd->size = 0x1000 - (orig_hole_pos & 0xFFF) - sizeof(header_t);
+  }
+}

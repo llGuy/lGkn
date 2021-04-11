@@ -107,13 +107,9 @@ void paging_init() {
   // Size of physical memory
   uint32_t mem_end_page = 0x1000000;
 
-  monitor_write("Hello paging world!\n");
-
   frame_count = mem_end_page / 0x1000;
   frames = (uint32_t *)kernel_malloc(INDEX_FROM_BIT(frame_count), 0, 0);
   memset(frames, 0, sizeof(uint32_t) * INDEX_FROM_BIT(frame_count));
-
-  monitor_write("Hello paging world!\n");
 
   g_kernel_directory = (page_directory_t *)kernel_malloc(
     sizeof(page_directory_t), 1, 0);
@@ -121,23 +117,15 @@ void paging_init() {
   memset(g_kernel_directory, 0, sizeof(page_directory_t));
   current_directory = g_kernel_directory;
 
-  monitor_write("Hello paging world!\n");
-
   int i = 0;
   while (i < current_ptr) {
     alloc_frame(paging_get_page(i, 1, g_kernel_directory), 0, 0);
     i += 0x1000;
   }
 
-  monitor_write("Hello paging world!\n");
-
   register_interrupt_handler(14, page_fault);
 
-  monitor_write("Hello paging world!\n");
-
   paging_switch_directory(g_kernel_directory);
-
-  monitor_write("Hello paging world!\n");
 }
 
 void paging_switch_directory(page_directory_t *new_dir) {

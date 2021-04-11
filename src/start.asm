@@ -5,6 +5,7 @@ MBOOT_HEADER_MAGIC      equ 0xe85250d6
 MBOOT_I386_ARCHITECTURE equ 0
 
 extern kernel_main
+extern stack_top
 global start
 
 section .multiboot
@@ -29,10 +30,10 @@ mboot_start:
 
 mboot_end: 
 
-
 section .text
 start:
     push ebx
+    mov esp, stack_top
     cli                         ; Clear interrupts
     call kernel_main
 

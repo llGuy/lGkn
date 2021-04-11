@@ -38,8 +38,12 @@ static void irq_remap() {
     Slave PIC data port    : 0xA1
       
     By default:
-    Master PIC interrupt request (IRQ) numbers 0 to 7 <=> CPU interrupts 0x08 to 0x0F
-    Slave PIC interrupt request (IRQ) numbers 8 to 15 <=> CPU interrupts 0x70 to 0x77 
+
+    Master PIC interrupt request (IRQ) numbers 0 to 7 
+      <=> CPU interrupts 0x08 to 0x0F
+
+    Slave PIC interrupt request (IRQ) numbers 8 to 15 
+      <=> CPU interrupts 0x70 to 0x77 
       
     We are going to move the IRQs of the master PIC card to the first available
     CPU interrupts numbers (32-47)
