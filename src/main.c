@@ -1,4 +1,5 @@
 #include "int.h"
+#include "port.h"
 #include "idt.h"
 #include "gdt.h"
 #include "monitor.h"
@@ -20,11 +21,8 @@ int kernel_main(multiboot_t *mboot_info) {
   idt_init();
   paging_init();
 
-
   uint32_t *ptr = (uint32_t *)0xA0000000;
   uint32_t do_page_fault = *ptr;
-
-  // timer_init(50)  --> make sure to call "sti"
 
   return 0;
 }

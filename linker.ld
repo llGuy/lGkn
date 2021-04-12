@@ -26,6 +26,8 @@ SECTIONS
     {
         *(.bss)
         . = ALIGN(4096);
+
+        /* Initialise the stack in the .bss section */
         stack_bottom = .;
         stack_top = stack_bottom + 16384;
         . = stack_top + 16;

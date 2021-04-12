@@ -7,21 +7,21 @@ extern uint32_t end;
 static uint32_t current_ptr = (uint32_t)&end;
 
 uint32_t kernel_malloc(
-  uint32_t size,
-  bool32_t is_aligned,
-  uint32_t *physical) {
-  if (is_aligned && (current_ptr & 0xFFFFF000)) {
-    current_ptr &= 0xFFFFF000;
-    current_ptr += 0x1000;
-  }
+uint32_t size,
+bool32_t is_aligned,
+uint32_t *physical) {
+if (is_aligned && (current_ptr & 0xFFFFF000)) {
+current_ptr &= 0xFFFFF000;
+current_ptr += 0x1000;
+}
 
-  if (physical) {
-    *physical = current_ptr;
-  }
+if (physical) {
+*physical = current_ptr;
+}
 
-  uint32_t tmp = current_ptr;
-  current_ptr += size;
-  return tmp;
+uint32_t tmp = current_ptr;
+current_ptr += size;
+return tmp;
 }
 
 static uint32_t *frames;
@@ -31,40 +31,40 @@ static uint32_t frame_count;
 #define OFFSET_FROM_BIT(a) (a % (8 * 4))
 
 static void set_frame(uint32_t frame_addr) {
-  uint32_t frame = frame_addr / 0x1000;
-  uint32_t idx = INDEX_FROM_BIT(frame);
-  uint32_t off = OFFSET_FROM_BIT(frame);
-  frames[idx] |= (0x1 << off);
+uint32_t frame = frame_addr / 0x1000;
+uint32_t idx = INDEX_FROM_BIT(frame);
+uint32_t off = OFFSET_FROM_BIT(frame);
+frames[idx] |= (0x1 << off);
 }
 
 static void clear_frame(uint32_t frame_addr) {
-  uint32_t frame = frame_addr / 0x1000;
-  uint32_t idx = INDEX_FROM_BIT(frame);
-  uint32_t off = OFFSET_FROM_BIT(frame);
-  frames[idx] &= ~(0x1 << off);
+uint32_t frame = frame_addr / 0x1000;
+uint32_t idx = INDEX_FROM_BIT(frame);
+uint32_t off = OFFSET_FROM_BIT(frame);
+frames[idx] &= ~(0x1 << off);
 }
 
 static uint32_t test_trame(uint32_t frame_addr) {
-  uint32_t frame = frame_addr / 0x1000;
-  uint32_t idx = INDEX_FROM_BIT(frame);
-  uint32_t off = OFFSET_FROM_BIT(frame);
-  return frames[idx] & (0x1 << off);
+uint32_t frame = frame_addr / 0x1000;
+uint32_t idx = INDEX_FROM_BIT(frame);
+uint32_t off = OFFSET_FROM_BIT(frame);
+return frames[idx] & (0x1 << off);
 }
 
 static uint32_t first_frame() {
-  for (uint32_t i = 0; i < INDEX_FROM_BIT(frame_count); ++i) {
-    if (frames[i] != 0xFFFFFFFF) {
-      for (uint32_t j = 0; j < 32; ++j) {
-        uint32_t to_test = 0x1 << j;
-        if (!(frames[i] & to_test)) {
-          return i * 4 * 8 + j;
-        }
-      }
+for (uint32_t i = 0; i < INDEX_FROM_BIT(frame_count); ++i) {
+if (frames[i] != 0xFFFFFFFF) {
+    for (uint32_t j = 0; j < 32; ++j) {
+    uint32_t to_test = 0x1 << j;
+    if (!(frames[i] & to_test)) {
+        return i * 4 * 8 + j;
     }
-  }
+    }
+}
+}
 
-  // Invalid
-  return 0xFFFFFFFF;
+// Invalid
+return 0xFFFFFFFF;
 }
 
 void alloc_frame(page_t *page, bool32_t is_kernel, bool32_t is_writeable) {
