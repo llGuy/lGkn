@@ -20,6 +20,7 @@ boot:
   jmp CODE_SEG:boot2
   
 gdt_start:  
+  ;; Null segment
   dq 0x0
 gdt_code: 
   dw 0xFFFF
@@ -55,18 +56,19 @@ boot2:
   mov esi, hello
   mov ebx, 0xb8000
 .loop:
-  lodsb
+  mov al, byte [esi]
   or al, al
   jz halt
   or eax, 0x0100
   mov word [ebx], ax
   add ebx, 2
+  inc esi
   jmp .loop
 halt: 
   cli
   hlt
 
-hello:  db "Hello World", 0
+hello:  db "Hello My Friend!", 0
 
 ;; Pad remaining 510 bytes with zeroes
 times 510 - ($-$$) db 0

@@ -10,11 +10,11 @@ boot:
   ;; 0x0e = Write Character in TTY mode
   mov ah, 0x0e
 .loop:
-  lodsb
+  mov al, byte [si]
   or al, al
   jz halt
-  ;; BIOS interrupt 0x10 - Video services
   int 0x10
+  inc si
   jmp .loop
 halt: 
   ;; Clear interrupts
@@ -22,7 +22,7 @@ halt:
   ;; Halt
   hlt
 
-hello:  db "Hello World", 0
+hello:  db "Hello World!", 0
 
 ;; Pad remaining 510 bytes with zeroes
 times 510 - ($-$$) db 0
