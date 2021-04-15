@@ -1,5 +1,8 @@
+section .boot
+
 bits 16
-org 0x7c00
+  
+global boot
   
 boot: 
 
@@ -10,6 +13,20 @@ boot:
   ;; Set VGA text mode 3
   mov ax, 0x3
   int 0x10
+  
+  mov [disk], dl
+  
+  ;; Read sectors
+  mov ah, 0x2
+  ;; Sectors to read
+  mov al, 6
+  mov ch, 0
+  mov dh, 0
+  mov cl, 2
+  mov dl, [disk]
+  mov bx, copy_target
+  int 0x13
+
   cli
   
   ;; Load the GDT table
@@ -18,6 +35,14 @@ boot:
   ;; Set the protected mode bit on special CPU register cr0
   or eax, 0x1
   mov cr0, eax
+  
+  mov ax, DATA_SEG
+  mov ds, ax
+  mov es, ax
+  mov fs, ax
+  mov gs, ax
+  mov ss, ax
+
   ;; Long jump to code segment
   jmp CODE_SEG:boot2
   
@@ -43,36 +68,29 @@ gdt_end:
 gdt_pointer:  
   dw gdt_end - gdt_start 
   dd gdt_start 
+disk: 
+  db 0x0
 CODE_SEG equ gdt_code - gdt_start
 DATA_SEG equ gdt_data - gdt_start
-
-bits 32
-boot2:  
-  mov ax, DATA_SEG
-  mov ds, ax
-  mov es, ax
-  mov fs, ax
-  mov gs, ax
-  mov ss, ax
-
-  mov esi, hello
-  mov ebx, 0xb8000
-.loop:
-  mov al, byte [esi]
-  or al, al
-  jz halt
-  or eax, 0x0100
-  mov word [ebx], ax
-  add ebx, 2
-  inc esi
-  jmp .loop
-halt: 
-  cli
-  hlt
-
-hello:  db "Hello My Friend!", 0
 
 ;; Pad remaining 510 bytes with zeroes
 times 510 - ($-$$) db 0
 ;; Magic bootloader - marks this 512 byte sector as bootable
 dw 0xaa55
+
+bits 32
+  
+extern kmain
+
+copy_target:  
+
+boot2:  
+  call kmain
+  cli
+  hlt
+
+section .bss
+align 4
+kernel_stack_bottom:  equ $
+  resb 16384                    ; 16 KB
+kernel_stack_top: 
